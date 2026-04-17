@@ -164,7 +164,7 @@ export function PortfolioView({ collectionId }: PortfolioViewProps) {
                             className="portfolio__btn-delete-txn"
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleDeleteTransaction(t.id);
+                              if (t.id) handleDeleteTransaction(t.id);
                             }}
                             title="Xóa giao dịch này"
                           >

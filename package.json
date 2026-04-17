@@ -10,7 +10,8 @@
     "build": "tsc -b && vite build",
     "sync": "tsx server/sync/vnstock-worker.ts",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npx vercel --prod"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.103.2",

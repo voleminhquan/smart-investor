@@ -32,8 +32,8 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Skip starting the server and cron jobs if running on Vercel Serverless
-if (!process.env.VERCEL) {
+// Skip starting the server and cron jobs if running on Vercel Serverless (production)
+if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => {
     console.log(`🚀 Smart Investor API running on http://localhost:${PORT}`);
     startScheduler();
