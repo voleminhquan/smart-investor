@@ -1,0 +1,152 @@
+.stock-table {
+  background: var(--color-bg-section);
+  border: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.stock-table__header {
+  display: flex;
+  padding: var(--space-3) var(--space-5);
+  border-bottom: var(--border-subtle);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.stock-table__col {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stock-table__col--symbol { width: 72px; flex-shrink: 0; }
+.stock-table__col--name { flex: 1; min-width: 0; }
+.stock-table__col--price { width: 100px; text-align: right; flex-shrink: 0; }
+.stock-table__col--change { width: 80px; text-align: right; flex-shrink: 0; }
+.stock-table__col--action { width: 36px; flex-shrink: 0; text-align: center; }
+
+.stock-table__body {
+  display: flex;
+  flex-direction: column;
+}
+
+.stock-table__row {
+  display: flex;
+  align-items: center;
+  padding: var(--space-3) var(--space-5);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  animation: fadeInUp 0.35s ease both;
+}
+
+.stock-table__row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.stock-table__row--active {
+  background: rgba(59, 130, 246, 0.06);
+  border-left: 3px solid var(--color-accent-blue);
+}
+
+.stock-table__row .stock-table__col {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-primary);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.stock-table__row .stock-table__col--name {
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stock-table__row .stock-table__col--price {
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.stock-table__col--positive { color: var(--color-positive) !important; }
+.stock-table__col--negative { color: var(--color-negative) !important; }
+
+.stock-table__symbol-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--color-accent-blue);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.02em;
+}
+
+.stock-table__remove-btn {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+  cursor: pointer;
+  opacity: 0;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  line-height: 1;
+}
+
+.stock-table__row:hover .stock-table__remove-btn { opacity: 1; }
+.stock-table__remove-btn:hover {
+  color: var(--color-accent-red);
+  background: rgba(248, 113, 113, 0.1);
+}
+
+.stock-table__add-row {
+  display: block;
+  width: 100%;
+  padding: var(--space-3) var(--space-5);
+  background: none;
+  border: none;
+  border-top: var(--border-subtle);
+  color: var(--color-text-muted);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+}
+
+.stock-table__add-row:hover {
+  color: var(--color-accent-blue);
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.stock-table__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10) var(--space-5);
+  gap: var(--space-3);
+}
+
+.stock-table__empty-icon { font-size: 2.5rem; opacity: 0.4; }
+.stock-table__empty p { color: var(--color-text-muted); font-size: var(--font-size-sm); }
+
+.stock-table__empty-btn {
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-accent-blue);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: white;
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.stock-table__empty-btn:hover { background: #2563EB; }

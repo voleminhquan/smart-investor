@@ -1,0 +1,87 @@
+.chart-container {
+  background: var(--color-bg-section);
+  border: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  animation: fadeInUp 0.4s ease both;
+}
+
+.chart-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: var(--border-subtle);
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.chart-toolbar__ranges,
+.chart-toolbar__indicators {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.chart-range-btn {
+  padding: var(--space-1) var(--space-3);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  font-family: var(--font-family);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.chart-range-btn:hover {
+  color: var(--color-text-secondary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.chart-range-btn--active {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--color-accent-blue);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.chart-indicator-btn {
+  padding: var(--space-1) var(--space-3);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  font-family: var(--font-family);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.chart-indicator-btn--active {
+  color: var(--indicator-color, var(--color-accent-blue));
+  border-color: var(--indicator-color, var(--color-accent-blue));
+  background: color-mix(in srgb, var(--indicator-color, var(--color-accent-blue)) 12%, transparent);
+}
+
+.chart-indicator-btn--active::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--indicator-color, var(--color-accent-blue));
+  margin-right: 4px;
+}
+
+.chart-wrapper {
+  padding: var(--space-2);
+}
+
+@media (max-width: 480px) {
+  .chart-wrapper {
+    height: 300px;
+  }
+}

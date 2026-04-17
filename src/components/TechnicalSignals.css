@@ -1,0 +1,76 @@
+
+.tech-signals {
+  background: var(--color-bg-card);
+  border: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  animation: fadeInUp 0.3s ease;
+  margin-top: var(--space-4);
+}
+.tech-signals__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.tech-signals__header h4 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+.tech-signals__summary {
+  display: flex;
+  gap: var(--space-2);
+}
+.badge {
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+.badge-bullish { background: rgba(52, 211, 153, 0.15); color: var(--color-positive); }
+.badge-bearish { background: rgba(248, 113, 113, 0.15); color: var(--color-negative); }
+.tech-signals__empty {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  text-align: center;
+  padding: var(--space-4) 0;
+}
+.tech-signals__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.tech-signal-card {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border-left: 3px solid transparent;
+  background: rgba(0,0,0,0.1);
+}
+.tech-signal-card.type-bullish { border-left-color: var(--color-positive); }
+.tech-signal-card.type-bearish { border-left-color: var(--color-negative); }
+.tech-signal-card.type-neutral { border-left-color: var(--color-text-muted); }
+
+.tech-signal-card__header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+.tech-signal-card__name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+.tech-signal-card__conf {
+  font-size: var(--font-size-xs);
+}
+.conf-high { color: var(--color-positive); }
+.conf-medium { color: var(--color-accent-blue); }
+.conf-low { color: var(--color-text-muted); }
+.tech-signal-card__desc {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+

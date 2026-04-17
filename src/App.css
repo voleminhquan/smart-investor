@@ -1,0 +1,306 @@
+/* ===================================
+   App Layout — Sidebar + Main
+   =================================== */
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-y: auto;
+  height: 100vh;
+}
+
+/* ── Mobile Header ── */
+.app-main__mobile-header {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-secondary);
+  border-bottom: var(--border-subtle);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.app-main__hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app-main__hamburger span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--color-text-primary);
+  border-radius: 2px;
+  transition: all var(--transition-fast);
+}
+
+.app-main__mobile-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  flex: 1;
+  padding: 0 var(--space-2);
+}
+
+.app-main__settings-btn {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 8px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Desktop Collection Header ── */
+.app-main__collection-header {
+  padding: var(--space-5) var(--space-6) var(--space-3);
+  border-bottom: var(--border-subtle);
+  background: var(--color-bg-primary);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.app-main__collection-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+/* ── Content Grid ── */
+.app-main__content {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  flex: 1;
+  min-height: 0;
+}
+
+.app-main__content.app-main__content--portfolio {
+  grid-template-columns: 1fr;
+}
+
+/* Left: Stock table pane */
+.app-main__list-pane {
+  overflow-y: auto;
+  height: calc(100vh - 60px);
+}
+
+.app-main__list-pane > .stock-table {
+  border-radius: 0;
+  border-top: none;
+  border-left: none;
+  border-bottom: none;
+  min-height: 100%;
+}
+
+/* Right: Stock detail */
+.stock-detail {
+  overflow-y: auto;
+  height: calc(100vh - 60px);
+  animation: fadeInUp 0.3s ease both;
+}
+
+.stock-detail__back {
+  display: none;
+}
+
+.stock-detail__body {
+  padding: var(--space-5) var(--space-6) var(--space-12);
+  max-width: 720px;
+}
+
+/* ── Indicators Grid ── */
+.indicators-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ── Placeholder View ── */
+.placeholder-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  text-align: center;
+  gap: var(--space-3);
+  animation: fadeInUp 0.5s ease both;
+}
+
+.placeholder-view__icon {
+  font-size: 3rem;
+  margin-bottom: var(--space-2);
+  opacity: 0.5;
+}
+
+.placeholder-view__title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.placeholder-view__text {
+  font-size: var(--font-size-base);
+  color: var(--color-text-muted);
+}
+
+/* ===================================
+   Responsive — Tablet
+   =================================== */
+@media (max-width: 1024px) {
+  .app-main__content {
+    grid-template-columns: 1fr;
+  }
+
+  .app-main__list-pane {
+    height: auto;
+    max-height: 300px;
+    border-bottom: var(--border-subtle);
+  }
+
+  .stock-detail {
+    height: auto;
+  }
+}
+
+/* ===================================
+   Responsive — Mobile
+   =================================== */
+@media (max-width: 768px) {
+  .app-main__mobile-header {
+    display: flex;
+  }
+
+  .app-main__collection-header {
+    display: none;
+  }
+
+  .app-main {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: visible;
+  }
+
+  .app-main__content {
+    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Mobile: toggle between list and detail */
+  .app-main__list-pane {
+    max-height: none;
+    height: auto;
+  }
+
+  .app-main__list-pane--hidden-mobile {
+    display: none;
+  }
+
+  .stock-detail {
+    height: auto;
+    overflow-y: visible;
+  }
+
+  .stock-detail__back {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: none;
+    border: none;
+    border-bottom: var(--border-subtle);
+    color: var(--color-accent-blue);
+    font-family: var(--font-family);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    width: 100%;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 44px;
+  }
+
+  .stock-detail__body {
+    padding: var(--space-3) var(--space-3) var(--space-8);
+  }
+
+  /* Touch-friendly sizing */
+  .nav-tab {
+    padding: var(--space-3) var(--space-4);
+    min-height: 44px;
+  }
+
+  .metric-row {
+    padding: var(--space-4);
+    min-height: 48px;
+  }
+}
+
+/* ===================================
+   Responsive — Small Mobile
+   =================================== */
+@media (max-width: 380px) {
+  .stock-detail__body {
+    padding: var(--space-2) var(--space-2) var(--space-6);
+  }
+
+  .app-main__mobile-header {
+    padding: var(--space-2) var(--space-3);
+  }
+}
+
+.collection-tabs {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: var(--border-subtle);
+  background: var(--color-bg-primary);
+}
+.collection-tab {
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-2) 0;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+}
+.collection-tab:hover {
+  color: var(--color-text-primary);
+}
+.collection-tab.active {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-bold);
+}
+.collection-tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--color-accent-blue);
+  border-radius: 2px;
+}
