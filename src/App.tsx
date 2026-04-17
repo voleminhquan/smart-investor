@@ -325,7 +325,7 @@ function App() {
             </div>
           )}
           </>
-          )} /* end of activeView check */
+          )}
         </div>
       </div>
 
