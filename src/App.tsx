@@ -34,53 +34,42 @@ function App() {
   const [stockDetails, setStockDetails] = useState<Record<string, any>>({});
   const initialLoadDone = useRef(false);
 
-  // Load collections and companies
-  useEffect(() => {
-    let isMounted = true;
-    const loadData = async () => {
-      try {
-        const [collectionsData, companiesData] = await Promise.all([
-          fetchCollections(),
-          fetchCompanies()
-        ]);
-        
-        if (!isMounted) return;
-
-        setCollections(collectionsData);
-        
-        // Only set initial selection on the very first load
-        if (!initialLoadDone.current && collectionsData.length > 0) {
-          initialLoadDone.current = true;
-          setActiveCollectionId(collectionsData[0].id);
-          if (collectionsData[0].symbols.length > 0) {
-            setActiveSymbol(collectionsData[0].symbols[0]);
-          }
+  const loadData = useCallback(async () => {
+    try {
+      const [collectionsData, companiesData] = await Promise.all([
+        fetchCollections(),
+        fetchCompanies()
+      ]);
+      
+      setCollections(collectionsData);
+      
+      // Only set initial selection on the very first load
+      if (!initialLoadDone.current && collectionsData.length > 0) {
+        initialLoadDone.current = true;
+        setActiveCollectionId(collectionsData[0].id);
+        if (collectionsData[0].symbols.length > 0) {
+          setActiveSymbol(collectionsData[0].symbols[0]);
         }
-
-        const detailsMap: Record<string, any> = {};
-        for(const c of companiesData as any[]) {
-          detailsMap[c.symbol] = c;
-        }
-        setStockDetails(detailsMap);
-
-        setIsLoading(false);
-      } catch(err) {
-        console.error(err);
-        setIsLoading(false);
       }
-    };
-    
-    // Initial load
-    loadData();
 
-    // Poll every 10 seconds for updates (useful after a background sync is started)
-    const interval = setInterval(loadData, 10000);
-
-    return () => { 
-      isMounted = false; 
-      clearInterval(interval);
-    };
+      const detailsMap: Record<string, any> = {};
+      for(const c of companiesData as any[]) {
+        detailsMap[c.symbol] = c;
+      }
+      setStockDetails(detailsMap);
+      setIsLoading(false);
+    } catch(err) {
+      console.error(err);
+      setIsLoading(false);
+    }
   }, []);
+
+  // Initial load and polling
+  useEffect(() => {
+    loadData();
+    const interval = setInterval(loadData, 10000);
+    return () => clearInterval(interval);
+  }, [loadData]);
 
   // Load active stock details
   useEffect(() => {
@@ -338,7 +327,10 @@ function App() {
       )}
 
       {showSettings && (
-        <SettingsModal onClose={() => setShowSettings(false)} />
+        <SettingsModal 
+          onClose={() => setShowSettings(false)} 
+          onRefreshData={loadData}
+        />
       )}
     </div>
   );

@@ -14,9 +14,10 @@ export function saveVnstockKey(key: string): void {
 
 interface SettingsModalProps {
   onClose: () => void;
+  onRefreshData?: () => Promise<void>;
 }
 
-export function SettingsModal({ onClose }: SettingsModalProps) {
+export function SettingsModal({ onClose, onRefreshData }: SettingsModalProps) {
   const [apiKey, setApiKey] = useState('');
   const [saved, setSaved] = useState(false);
   const [showKey, setShowKey] = useState(false);
@@ -40,10 +41,12 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
       setIsSyncing(status.syncing);
       
       if (status.syncing && !pollTimer.current) {
-        pollTimer.current = window.setInterval(loadSyncStatus, 3000);
+        pollTimer.current = window.setInterval(loadSyncStatus, 2000);
       } else if (!status.syncing && pollTimer.current) {
         window.clearInterval(pollTimer.current);
         pollTimer.current = null;
+        // Trigger global data refresh when sync finishes
+        if (onRefreshData) onRefreshData();
       }
     } catch (err) {
       console.error('Failed to load sync status:', err);

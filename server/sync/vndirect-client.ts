@@ -114,6 +114,41 @@ export async function fetchPriceHistory(symbol: string, fromDate: string = '2024
   }
 }
 
+// ─── Real-time Quote ─────────────────────────────────
+
+export async function fetchQuote(symbol: string) {
+  try {
+    const url = `https://services.entrade.com.vn/chart-api/v2/ohlcs/stock?from=${Math.floor(Date.now()/1000) - 86400}&to=${Math.floor(Date.now()/1000)}&symbol=${symbol.toUpperCase()}&resolution=1D`;
+    
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+        'Origin': 'https://banggia.dnse.com.vn',
+        'Referer': 'https://banggia.dnse.com.vn/'
+      }
+    });
+
+    if (!response.ok) return null;
+    const data = await response.json();
+    if (!data.c || !data.c.length) return null;
+
+    const lastIdx = data.c.length - 1;
+    return {
+      symbol: symbol.toUpperCase(),
+      date: new Date(data.t[lastIdx] * 1000).toISOString().split('T')[0],
+      open: data.o[lastIdx] * 1000,
+      high: data.h[lastIdx] * 1000,
+      low: data.l[lastIdx] * 1000,
+      close: data.c[lastIdx] * 1000,
+      volume: data.v[lastIdx],
+      interval: 'd'
+    };
+  } catch (err) {
+    console.warn(`Quote fetch failed for ${symbol}:`, (err as Error).message);
+    return null;
+  }
+}
+
 // ─── Financial Ratios (Mocked for VNDirect public wrapper currently) ──
 
 export async function fetchFinancialRatios(symbol: string) {

@@ -2,6 +2,7 @@ import { supabase } from '../db';
 import {
   fetchCompanyOverview,
   fetchPriceHistory,
+  fetchQuote,
   fetchFinancialRatios,
   fetchFinancialRatiosQuarterly,
   fetchBalanceSheet,
@@ -155,29 +156,37 @@ export async function syncAll(): Promise<void> {
 
   const { data: syncLog } = await supabase
     .from('sync_log')
-    .insert({ sync_type: 'prices', status: 'running', message: `Syncing ${symbols.length} symbols` })
+    .insert({ sync_type: 'prices', status: 'running', message: `Syncing ${symbols.length} symbols (parallel)` })
     .select()
     .single();
 
   let totalPrices = 0;
   const errors: string[] = [];
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 86400 * 1000).toISOString().split('T')[0];
 
-  for (const symbol of symbols) {
+  // Process in parallel chunks to stay within Vercel's 10s limit
+  const processInParallel = async (symbol: string) => {
     try {
-      // Update company info
+      // 1. Sync Company Info (fast)
       await syncCompany(symbol);
-      // Only 30 days for periodic sync
-      const thirtyDaysAgo = new Date(Date.now() - 30 * 86400 * 1000).toISOString().split('T')[0];
+      
+      // 2. Sync Latest Quote (very fast)
+      const quote = await fetchQuote(symbol);
+      if (quote) {
+        await supabase.from('price_history').upsert(quote, { onConflict: 'symbol,date,interval' });
+        totalPrices++;
+      }
+
+      // 3. Sync Recent History (moderate)
       const count = await syncPrices(symbol, thirtyDaysAgo);
       totalPrices += count;
-      // Small delay to avoid rate limiting
-      await new Promise(r => setTimeout(r, 500));
     } catch (err: any) {
-      const msg = `${symbol}: ${err.message}`;
-      console.error(`  ❌ ${msg}`);
-      errors.push(msg);
+      errors.push(`${symbol}: ${err.message}`);
     }
-  }
+  };
+
+  // Run all in parallel
+  await Promise.all(symbols.map(s => processInParallel(s)));
 
   // Update sync log
   if (syncLog) {
