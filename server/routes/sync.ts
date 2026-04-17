@@ -68,7 +68,21 @@ syncRouter.post('/financials/:symbol', async (req, res) => {
   }
 });
 
-// GET /api/sync/status — Check sync status
+// GET /api/sync/status — Check sync status and get last log
 syncRouter.get('/status', async (_req, res) => {
-  res.json({ syncing: isSyncing });
+  try {
+    const { data: lastSync } = await supabase
+      .from('sync_log')
+      .select('*')
+      .order('started_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    res.json({ 
+      syncing: isSyncing,
+      lastSync: lastSync || null
+    });
+  } catch (err) {
+    res.json({ syncing: isSyncing, lastSync: null });
+  }
 });

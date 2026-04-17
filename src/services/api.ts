@@ -201,3 +201,35 @@ export async function fetchFundamental(symbol: string): Promise<FundamentalAnaly
   if (!res.ok) throw new Error('Failed to fetch fundamental analysis');
   return res.json();
 }
+
+// ─── Sync ─────────────────────────────────────────────────────
+
+export interface SyncLog {
+  id: number;
+  sync_type: string;
+  status: string;
+  message: string;
+  records_count: number;
+  started_at: string;
+  finished_at: string | null;
+}
+
+export interface SyncStatus {
+  syncing: boolean;
+  lastSync?: SyncLog;
+}
+
+export async function triggerFullSync(): Promise<{ status: string; message: string }> {
+  const res = await fetch('/api/sync/all', { method: 'POST' });
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || 'Failed to trigger sync');
+  }
+  return res.json();
+}
+
+export async function fetchSyncStatus(): Promise<SyncStatus> {
+  const res = await fetch('/api/sync/status');
+  if (!res.ok) throw new Error('Failed to fetch sync status');
+  return res.json();
+}

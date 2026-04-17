@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { fetchSyncStatus, triggerFullSync, type SyncStatus } from '../services/api';
 import './SettingsModal.css';
 
 const VNSTOCK_KEY_STORAGE = 'smart-investor-vnstock-key';
@@ -19,10 +20,50 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
   const [apiKey, setApiKey] = useState('');
   const [saved, setSaved] = useState(false);
   const [showKey, setShowKey] = useState(false);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus | null>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const pollTimer = useRef<number | null>(null);
 
   useEffect(() => {
     setApiKey(getVnstockKey());
+    loadSyncStatus();
+
+    return () => {
+      if (pollTimer.current) window.clearInterval(pollTimer.current);
+    };
   }, []);
+
+  const loadSyncStatus = async () => {
+    try {
+      const status = await fetchSyncStatus();
+      setSyncStatus(status);
+      setIsSyncing(status.syncing);
+      
+      if (status.syncing && !pollTimer.current) {
+        pollTimer.current = window.setInterval(loadSyncStatus, 3000);
+      } else if (!status.syncing && pollTimer.current) {
+        window.clearInterval(pollTimer.current);
+        pollTimer.current = null;
+      }
+    } catch (err) {
+      console.error('Failed to load sync status:', err);
+    }
+  };
+
+  const handleSync = async () => {
+    if (isSyncing) return;
+    try {
+      setIsSyncing(true);
+      await triggerFullSync();
+      // Start polling
+      if (!pollTimer.current) {
+        pollTimer.current = window.setInterval(loadSyncStatus, 3000);
+      }
+    } catch (err: any) {
+      alert(`Lỗi đồng bộ: ${err.message}`);
+      setIsSyncing(false);
+    }
+  };
 
   const handleSave = () => {
     saveVnstockKey(apiKey.trim());
@@ -113,6 +154,40 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
                 </div>
                 <span className="settings-source__status active">✓</span>
               </div>
+            </div>
+          </div>
+
+          {/* Data Synchronization */}
+          <div className="settings-section">
+            <div className="settings-section__header">
+              <h4 className="settings-section__title">Đồng bộ dữ liệu</h4>
+              {isSyncing && <span className="settings-section__badge settings-section__badge--syncing">Đang chạy...</span>}
+            </div>
+            <p className="settings-section__desc">
+              Cập nhật giá mới nhất và chỉ số tài chính cho toàn bộ danh mục của bạn.
+            </p>
+
+            <div className="sync-status-card">
+              <div className="sync-status-card__info">
+                <span className="sync-status-card__label">Lần cuối:</span>
+                <span className="sync-status-card__value">
+                  {syncStatus?.lastSync?.finished_at 
+                    ? new Date(syncStatus.lastSync.finished_at).toLocaleString('vi-VN') + ' (' + syncStatus.lastSync.status + ')'
+                    : 'Chưa có thông tin'}
+                </span>
+                {syncStatus?.lastSync?.records_count ? (
+                  <span className="sync-status-card__subtext">
+                    {syncStatus.lastSync.records_count} bản ghi đã cập nhật
+                  </span>
+                ) : null}
+              </div>
+              <button 
+                className={`sync-btn ${isSyncing ? 'sync-btn--loading' : ''}`}
+                onClick={handleSync}
+                disabled={isSyncing}
+              >
+                {isSyncing ? '⌛ Đang kéo số...' : '🔄 Cập nhật ngay'}
+              </button>
             </div>
           </div>
         </div>
