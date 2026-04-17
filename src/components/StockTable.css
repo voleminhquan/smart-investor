@@ -124,6 +124,27 @@
   background: rgba(59, 130, 246, 0.05);
 }
 
+.stock-table__company-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.stock-table__company-name {
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.stock-table__updated-at {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-normal);
+}
+
 .stock-table__empty {
   display: flex;
   flex-direction: column;

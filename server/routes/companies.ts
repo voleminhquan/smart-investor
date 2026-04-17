@@ -11,24 +11,24 @@ companiesRouter.get('/', async (_req, res) => {
       symbol, company_name, short_name, exchange, industry, market_cap, outstanding_shares, updated_at,
       price_history(close, open, date)
     `)
-    .order('symbol');
+    .order('symbol')
+    .order('date', { foreignTable: 'price_history', ascending: false });
 
   if (error) return res.status(500).json({ error: error.message });
 
   // Map to format that frontend expects
   const formattedData = data.map((c: any) => {
-    // get latest price
     let latestPrice = 0;
     let change = 0;
     let changePercent = 0;
+    let updatedAt = c.updated_at;
     
     if (c.price_history && c.price_history.length > 0) {
-      // Supabase doesn't limit nested relations easily in select strings, so we sort in JS
-      const sortedPrices = c.price_history.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
-      const latest = sortedPrices[0];
+      const latest = c.price_history[0];
       latestPrice = latest.close;
+      updatedAt = new Date(latest.date).toISOString(); // Use price date as data freshness indicator
       
-      const prev = sortedPrices.length > 1 ? sortedPrices[1] : null;
+      const prev = c.price_history.length > 1 ? c.price_history[1] : null;
       if (prev && prev.close > 0) {
         change = latest.close - prev.close; 
         changePercent = (change / prev.close) * 100;
@@ -45,7 +45,8 @@ companiesRouter.get('/', async (_req, res) => {
       industry: c.industry,
       price: latestPrice,
       change: change,
-      changePercent: changePercent || 0
+      changePercent: changePercent || 0,
+      updatedAt: updatedAt
     };
   });
 

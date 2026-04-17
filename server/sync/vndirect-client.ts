@@ -118,7 +118,12 @@ export async function fetchPriceHistory(symbol: string, fromDate: string = '2024
 
 export async function fetchQuote(symbol: string) {
   try {
-    const url = `https://services.entrade.com.vn/chart-api/v2/ohlcs/stock?from=${Math.floor(Date.now()/1000) - 86400}&to=${Math.floor(Date.now()/1000)}&symbol=${symbol.toUpperCase()}&resolution=1D`;
+    // Increase lookback to 3 days to ensure we don't miss today's opening/closing bars 
+    // especially around weekends or holidays. Resolution 1D for efficiency.
+    const toUnix = Math.floor(Date.now() / 1000);
+    const fromUnix = toUnix - (3 * 86400); 
+    
+    const url = `https://services.entrade.com.vn/chart-api/v2/ohlcs/stock?from=${fromUnix}&to=${toUnix}&symbol=${symbol.toUpperCase()}&resolution=1D`;
     
     const response = await fetch(url, {
       headers: {
@@ -130,16 +135,24 @@ export async function fetchQuote(symbol: string) {
 
     if (!response.ok) return null;
     const data = await response.json();
-    if (!data.c || !data.c.length) return null;
+    
+    // Check if we have data for 't' (timestamps) and 'c' (close prices)
+    if (!data.t || !data.t.length || !data.c || !data.c.length) return null;
 
+    // Get the absolute last point available
     const lastIdx = data.c.length - 1;
+    
+    // Important: Prices in Entrade OHLC are usually in units of 1 (e.g. 178.2)
+    // while our DB expects thousands (e.g. 178200).
+    const priceScale = data.c[lastIdx] < 1000 ? 1000 : 1;
+
     return {
       symbol: symbol.toUpperCase(),
       date: new Date(data.t[lastIdx] * 1000).toISOString().split('T')[0],
-      open: data.o[lastIdx] * 1000,
-      high: data.h[lastIdx] * 1000,
-      low: data.l[lastIdx] * 1000,
-      close: data.c[lastIdx] * 1000,
+      open: data.o[lastIdx] * priceScale,
+      high: data.h[lastIdx] * priceScale,
+      low: data.l[lastIdx] * priceScale,
+      close: data.c[lastIdx] * priceScale,
       volume: data.v[lastIdx],
       interval: 'd'
     };

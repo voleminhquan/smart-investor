@@ -73,7 +73,14 @@ export function StockTable({
                   <span className="stock-table__symbol-badge">{sym}</span>
                 </span>
                 <span className="stock-table__col stock-table__col--name">
-                  {stock.companyName}
+                  <div className="stock-table__company-info">
+                    <span className="stock-table__company-name">{stock.companyName}</span>
+                    <span className="stock-table__updated-at">
+                      {stock.updatedAt 
+                        ? `Cập nhật: ${new Date(stock.updatedAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}` 
+                        : 'Chưa có thông tin'}
+                    </span>
+                  </div>
                 </span>
                 <span className="stock-table__col stock-table__col--price">
                   {displayPrice}
